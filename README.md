@@ -35,6 +35,14 @@ npm start
 
 The app will be available at `http://localhost:3000`.
 
+### Dev Server
+
+```bash
+npm run dev
+```
+
+Automatically rebuilds TypeScript and restarts the server on file changes.
+
 ### Scripts
 
 | Command         | Description                        |
@@ -42,6 +50,7 @@ The app will be available at `http://localhost:3000`.
 | `npm install`   | Install dependencies               |
 | `npm run build` | Compile TypeScript to `dist/`      |
 | `npm start`     | Start the server                   |
+| `npm run dev`   | Dev server with auto-rebuild       |
 
 ## Deployment
 
