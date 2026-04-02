@@ -3,8 +3,7 @@
 [![CI](https://github.com/BearAlliance/pointr/actions/workflows/ci.yml/badge.svg)](https://github.com/BearAlliance/pointr/actions/workflows/ci.yml)
 
 A tool for playing pointing poker.
-
-No login, no registration.
+No login, no registration, just pure agile bliss.
 
 ## Features
 
