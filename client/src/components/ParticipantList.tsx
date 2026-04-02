@@ -22,11 +22,11 @@ export function ParticipantList({ participants, revealed, socketId }: Participan
     <div className={styles.participants}>
       <h3>Participants</h3>
       <ul className={styles.list}>
-        {participants.map((p) => (
-          <li key={p.id}>
+        {[...participants].sort((a, b) => Number(b.observer) - Number(a.observer)).map((p) => (
+          <li key={p.id} className={p.observer ? styles.observerRow : ""}>
             <span className={styles.name}>
               {p.id === socketId ? `${p.name} (you)` : p.name}
-              {p.observer && <span className={styles.observerTag}> (observer)</span>}
+              {p.observer && <span className={styles.observerTag}> observer</span>}
             </span>
             <VoteStatus participant={p} revealed={revealed} />
           </li>
