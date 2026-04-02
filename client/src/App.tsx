@@ -33,10 +33,10 @@ export function App() {
       }
     });
 
-    // Check URL hash for session ID on mount
-    const hash = window.location.hash.slice(1);
-    if (hash.length > 0) {
-      joinSession(hash);
+    // Check URL path for session ID on mount (e.g. /play/ABC123)
+    const match = window.location.pathname.match(/^\/play\/([A-Za-z0-9]+)$/);
+    if (match) {
+      joinSession(match[1]);
     }
 
     return () => {
@@ -55,7 +55,7 @@ export function App() {
     socket.emit("join-session", id, (data: { ok: boolean; error?: string }) => {
       if (data.ok) {
         setSessionId(id);
-        window.location.hash = id;
+        window.history.pushState(null, "", `/play/${id}`);
       } else {
         setJoinError(data.error || "Could not join session");
       }
