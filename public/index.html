@@ -163,7 +163,7 @@
     </div>
   </div>
 
-  <footer>&copy; 2026 Nick Cacace &middot; <a href="https://github.com/BearAlliance/pointr">Source on GitHub</a></footer>
+  <footer>&copy; <span id="year"></span> Nick Cacace &middot; <a href="https://github.com/BearAlliance/pointr">Source on GitHub</a></footer>
 
   <script src="/socket.io/socket.io.js"></script>
   <script>
@@ -306,6 +306,8 @@
         }
       }
     });
+
+    document.getElementById("year").textContent = new Date().getFullYear();
   </script>
 </body>
 </html>
