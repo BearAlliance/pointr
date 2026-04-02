@@ -19,7 +19,11 @@ const nanoid_1 = require("nanoid");
 const nanoid = (0, nanoid_1.customAlphabet)("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 6);
 const path_1 = __importDefault(require("path"));
 const sessions = new Map();
-const fastify = (0, fastify_1.default)({ logger: true });
+const fastify = (0, fastify_1.default)({
+    logger: process.env.PRETTY_LOG
+        ? { transport: { target: "pino-pretty" } }
+        : true,
+});
 const log = fastify.log;
 fastify.register(static_1.default, {
     root: path_1.default.join(__dirname, "..", "public"),
