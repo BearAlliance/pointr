@@ -43,7 +43,7 @@ The app will be available at `http://localhost:3000`.
 npm run dev
 ```
 
-Automatically rebuilds TypeScript and restarts the server on file changes.
+Runs the Vite dev server (with HMR) on port 5173, the backend on port 3000, and watches for TypeScript changes. Open `http://localhost:5173` during development.
 
 ### Scripts
 
@@ -95,9 +95,10 @@ No external database is required — session data is stored in memory.
 FROM node:24-alpine
 WORKDIR /app
 COPY package*.json ./
-RUN npm install --production
+RUN npm install
 COPY . .
 RUN npm run build
+RUN npm prune --production
 EXPOSE 3000
 CMD ["npm", "start"]
 ```
