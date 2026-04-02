@@ -10,6 +10,7 @@ interface Participant {
   id: string;
   name: string;
   vote: number | null;
+  observer: boolean;
 }
 
 interface Session {
@@ -50,6 +51,7 @@ function sessionState(session: Session) {
     name: p.name,
     voted: p.vote !== null,
     vote: session.revealed ? p.vote : null,
+    observer: p.observer,
   }));
 
   return {
@@ -90,6 +92,7 @@ io.on("connection", (socket) => {
       id: socket.id,
       name: "Anonymous",
       vote: null,
+      observer: false,
     });
 
     socket.join(sessionId);
@@ -111,12 +114,27 @@ io.on("connection", (socket) => {
     broadcastSession(session);
   });
 
+  socket.on("toggle-observer", () => {
+    if (!currentSessionId) return;
+    const session = sessions.get(currentSessionId);
+    if (!session) return;
+    const participant = session.participants.get(socket.id);
+    if (!participant) return;
+
+    participant.observer = !participant.observer;
+    if (participant.observer) {
+      participant.vote = null;
+    }
+    log.info({ sessionId: currentSessionId, socketId: socket.id, name: participant.name, observer: participant.observer }, "observer toggled");
+    broadcastSession(session);
+  });
+
   socket.on("vote", (value: number) => {
     if (!currentSessionId) return;
     const session = sessions.get(currentSessionId);
     if (!session || session.revealed) return;
     const participant = session.participants.get(socket.id);
-    if (!participant) return;
+    if (!participant || participant.observer) return;
 
     const allowed = [1, 2, 3, 5, 8, 13, 21];
     if (!allowed.includes(value)) return;
