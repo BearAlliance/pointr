@@ -1,4 +1,5 @@
 import { socket } from "../socket";
+import styles from "./ObserverToggle.module.css";
 
 interface ObserverToggleProps {
   isObserver: boolean;
@@ -6,9 +7,9 @@ interface ObserverToggleProps {
 
 export function ObserverToggle({ isObserver }: ObserverToggleProps) {
   return (
-    <div className="observer-row">
+    <div className={styles.observerRow}>
       <button
-        className={isObserver ? "active" : ""}
+        className={isObserver ? styles.active : ""}
         onClick={() => socket.emit("toggle-observer")}
       >
         {isObserver ? "Switch to Voter" : "Switch to Observer"}

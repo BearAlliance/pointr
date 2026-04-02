@@ -1,4 +1,5 @@
 import { useState, type KeyboardEvent } from "react";
+import styles from "./Landing.module.css";
 
 interface LandingProps {
   onCreateSession: () => void;
@@ -19,10 +20,12 @@ export function Landing({ onCreateSession, onJoinSession, error }: LandingProps)
   };
 
   return (
-    <div className="landing">
-      <button onClick={onCreateSession}>Create Session</button>
-      <div className="join-row">
+    <div className={styles.landing}>
+      <button className={styles.createBtn} onClick={onCreateSession}>Create Session</button>
+      <div className={styles.divider}>or</div>
+      <div className={styles.joinRow}>
         <input
+          className={styles.joinInput}
           type="text"
           placeholder="ABC123"
           maxLength={6}
@@ -30,9 +33,9 @@ export function Landing({ onCreateSession, onJoinSession, error }: LandingProps)
           onChange={(e) => setJoinId(e.target.value)}
           onKeyDown={handleKeyDown}
         />
-        <button onClick={handleJoin}>Join</button>
+        <button className={styles.joinBtn} onClick={handleJoin}>Join</button>
       </div>
-      {error && <p className="error">{error}</p>}
+      {error && <p className={styles.error}>{error}</p>}
     </div>
   );
 }

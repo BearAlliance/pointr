@@ -6,6 +6,7 @@ import { ParticipantList } from "./ParticipantList";
 import { ReadyBanner } from "./ReadyBanner";
 import { socket } from "../socket";
 import { useState } from "react";
+import styles from "./Session.module.css";
 
 interface SessionProps {
   sessionId: string;
@@ -32,11 +33,11 @@ export function Session({ sessionId, state, myVote, socketId, onVote, onReset }:
   const allVoted = !state.revealed && voters.length > 0 && voters.every((p) => p.voted);
 
   return (
-    <div className="session">
-      <div className="session-id">
+    <div className={styles.session}>
+      <div className={styles.sessionId}>
         Session:{" "}
         <code onClick={copySessionId}>{sessionId}</code>
-        {copied && <span className="copied">Copied!</span>}
+        {copied && <span className={styles.copied}>Copied!</span>}
       </div>
 
       <NameInput />
@@ -52,11 +53,11 @@ export function Session({ sessionId, state, myVote, socketId, onVote, onReset }:
 
       <ReadyBanner visible={allVoted} />
 
-      <div className="actions">
-        <button className="reveal-btn" onClick={() => socket.emit("reveal")}>
+      <div className={styles.actions}>
+        <button className={styles.revealBtn} onClick={() => socket.emit("reveal")}>
           Reveal Votes
         </button>
-        <button className="reset-btn" onClick={onReset}>
+        <button className={styles.resetBtn} onClick={onReset}>
           Reset
         </button>
       </div>

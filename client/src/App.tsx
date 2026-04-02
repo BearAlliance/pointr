@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { socket } from "./socket";
 import { Landing } from "./components/Landing";
 import { Session } from "./components/Session";
+import styles from "./App.module.css";
 
 export interface ParticipantState {
   id: string;
@@ -74,8 +75,8 @@ export function App() {
 
   return (
     <>
-      <h1><a href="/">Pointr</a></h1>
-      <div className="container">
+      <h1 className={styles.title}><a href="/">Pointr</a></h1>
+      <div className={styles.container}>
         {!sessionId ? (
           <Landing onCreateSession={createSession} onJoinSession={joinSession} error={joinError} />
         ) : (
@@ -91,7 +92,7 @@ export function App() {
           )
         )}
       </div>
-      <footer>
+      <footer className={styles.footer}>
         &copy; {new Date().getFullYear()} Nick Cacace &middot;{" "}
         <a href="https://github.com/BearAlliance/pointr">Source on GitHub</a>
       </footer>

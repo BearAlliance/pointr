@@ -1,5 +1,6 @@
 import { useState, type KeyboardEvent } from "react";
 import { socket } from "../socket";
+import styles from "./NameInput.module.css";
 
 export function NameInput() {
   const [name, setName] = useState("");
@@ -14,7 +15,7 @@ export function NameInput() {
   };
 
   return (
-    <div className="name-row">
+    <div className={styles.nameRow}>
       <input
         type="text"
         placeholder="Your name"

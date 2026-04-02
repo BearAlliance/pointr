@@ -1,0 +1,12 @@
+.voteSection { text-align: center; margin-bottom: 1.5rem; }
+.voteSection h3 { margin-bottom: 0.8rem; color: #555; font-weight: 500; }
+.voteButtons { display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; }
+.voteBtn {
+  width: 56px; height: 56px; font-size: 1.2rem; font-weight: 600;
+  border: 2px solid #ddd; border-radius: 10px; background: #fff;
+  cursor: pointer; transition: all 0.15s;
+}
+.voteBtn:hover { border-color: #4f46e5; background: #eef2ff; }
+.selected {
+  background: #4f46e5; color: #fff; border-color: #4f46e5;
+}
