@@ -6,6 +6,7 @@
   padding: 0.6rem 1rem; background: #fff; border-radius: 8px;
   margin-bottom: 0.4rem; border: 1px solid #eee;
 }
+.observerRow { opacity: 0.65; }
 .name { font-weight: 500; }
 .observerTag { font-size: 0.8rem; color: #888; font-weight: 400; margin-left: 0.4rem; }
 .voteStatus {
