@@ -74,7 +74,7 @@ export function App() {
 
   return (
     <>
-      <h1>Pointr</h1>
+      <h1><a href="/">Pointr</a></h1>
       <div className="container">
         {!sessionId ? (
           <Landing onCreateSession={createSession} onJoinSession={joinSession} error={joinError} />
