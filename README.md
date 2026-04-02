@@ -11,6 +11,7 @@ No login, no registration.
 - Simple and intuitive interface
 - Real-time collaboration
 - Anonymous participation
+- Host it yourself or use the hosted version
 
 ## Use
 
@@ -56,7 +57,12 @@ Automatically rebuilds TypeScript and restarts the server on file changes.
 
 ## Deployment
 
-Pointr is a single Node.js process serving both the API (via Socket.IO) and static frontend files. No external database is required — session data is stored in memory.
+Pointr is a single Node.js process serving both the API (via Socket.IO) and static frontend files.
+No external database is required — session data is stored in memory.
+
+> [!WARNING]
+> Because there is no database, all session data will be lost when the server restarts.
+> This is generally fine for typical use, as sessions are short-lived and users can simply create a new session if needed.
 
 ### Environment
 
@@ -99,6 +105,8 @@ CMD ["npm", "start"]
 
 ### Notes
 
-- Session data lives in memory and is lost on restart. This is fine for typical use — sessions are short-lived.
+- Session data lives in memory and is lost on restart.
+  This is fine for typical use — sessions are short-lived.
 - The server binds to `0.0.0.0` by default, so it is accessible on all network interfaces.
-- For production, run behind a reverse proxy (e.g., nginx, Caddy) that handles TLS. Ensure the proxy is configured to support WebSocket connections for Socket.IO.
+- For production, run behind a reverse proxy (e.g., nginx, Caddy) that handles TLS.
+  Ensure the proxy is configured to support WebSocket connections for Socket.IO.
