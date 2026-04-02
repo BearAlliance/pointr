@@ -117,6 +117,12 @@
     .reset-btn { background: #ef4444; color: #fff; }
     .reset-btn:hover { background: #dc2626; }
 
+    .ready-banner {
+      display: none; text-align: center; padding: 0.6rem;
+      background: #d1fae5; color: #065f46; border-radius: 8px;
+      font-weight: 500; font-size: 0.95rem; margin-bottom: 1rem;
+    }
+
     .observer-row { text-align: center; margin-bottom: 1rem; }
     .observer-row button {
       padding: 0.4rem 1rem; font-size: 0.85rem; border: 2px solid #ddd;
@@ -177,6 +183,8 @@
         <h3>Participants</h3>
         <ul class="participant-list" id="participantList"></ul>
       </div>
+
+      <div class="ready-banner" id="readyBanner">All votes are in!</div>
 
       <div class="actions">
         <button class="reveal-btn" onclick="reveal()">Reveal Votes</button>
@@ -340,6 +348,11 @@
         li.appendChild(voteSpan);
         list.appendChild(li);
       });
+
+      // Ready indicator
+      const voters = state.participants.filter(p => !p.observer);
+      const allVoted = !state.revealed && voters.length > 0 && voters.every(p => p.voted);
+      document.getElementById("readyBanner").style.display = allVoted ? "block" : "none";
 
       // Sync local state
       const me = state.participants.find(p => p.id === socket.id);
