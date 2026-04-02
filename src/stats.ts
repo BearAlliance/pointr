@@ -17,8 +17,14 @@ export function registerStats(fastify: FastifyInstance, sessions: Map<string, Se
       `${seconds}s`,
     ].filter(Boolean).join(" ");
 
+    let activeParticipants = 0;
+    for (const session of sessions.values()) {
+      activeParticipants += session.participants.size;
+    }
+
     return reply.send({
       activeSessions: sessions.size,
+      activeParticipants,
       uptime,
     });
   });
