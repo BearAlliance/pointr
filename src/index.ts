@@ -20,7 +20,11 @@ interface Session {
 
 const sessions = new Map<string, Session>();
 
-const fastify = Fastify({ logger: true });
+const fastify = Fastify({
+  logger: process.env.PRETTY_LOG
+    ? { transport: { target: "pino-pretty" } }
+    : true,
+});
 const log = fastify.log;
 
 fastify.register(fastifyStatic, {
