@@ -96,7 +96,14 @@
     }
     .vote-status.pending { background: #f3f4f6; color: #aaa; }
     .vote-status.voted { background: #d1fae5; color: #059669; }
-    .vote-status.revealed { background: #e0e7ff; color: #4f46e5; }
+    .vote-status.revealed { font-weight: 700; }
+    .vote-status.vote-1  { background: #d4eaf7; color: #1a5a8a; }
+    .vote-status.vote-2  { background: #ffe0b2; color: #8a5100; }
+    .vote-status.vote-3  { background: #c8e6c9; color: #2e6b30; }
+    .vote-status.vote-5  { background: #f3d4e8; color: #8a1a5e; }
+    .vote-status.vote-8  { background: #fff3c4; color: #7a6800; }
+    .vote-status.vote-13 { background: #d1c4e9; color: #4a148c; }
+    .vote-status.vote-21 { background: #ffccbc; color: #8b2500; }
 
     /* Average */
     /* Actions */
@@ -282,7 +289,7 @@
 
         const voteSpan = document.createElement("span");
         if (state.revealed && p.vote !== null) {
-          voteSpan.className = "vote-status revealed";
+          voteSpan.className = "vote-status revealed vote-" + p.vote;
           voteSpan.textContent = p.vote;
         } else if (p.voted) {
           voteSpan.className = "vote-status voted";
