@@ -29,7 +29,7 @@ const fastify = Fastify({
 const log = fastify.log;
 
 fastify.register(fastifyStatic, {
-  root: path.join(__dirname, "..", "public"),
+  root: path.join(__dirname, "..", "client", "dist"),
 });
 
 const port = parseInt(process.env.PORT || "3000", 10);
