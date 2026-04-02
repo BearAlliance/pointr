@@ -269,7 +269,7 @@
 
         const nameSpan = document.createElement("span");
         nameSpan.className = "participant-name";
-        nameSpan.textContent = p.name;
+        nameSpan.textContent = p.id === socket.id ? p.name + " (you)" : p.name;
 
         const voteSpan = document.createElement("span");
         if (state.revealed && p.vote !== null) {
