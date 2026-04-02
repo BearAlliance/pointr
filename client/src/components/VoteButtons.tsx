@@ -1,3 +1,5 @@
+import styles from "./VoteButtons.module.css";
+
 const FIB_VALUES = [1, 2, 3, 5, 8, 13, 21];
 
 interface VoteButtonsProps {
@@ -7,13 +9,13 @@ interface VoteButtonsProps {
 
 export function VoteButtons({ myVote, onVote }: VoteButtonsProps) {
   return (
-    <div className="vote-section">
+    <div className={styles.voteSection}>
       <h3>Your Vote</h3>
-      <div className="vote-buttons">
+      <div className={styles.voteButtons}>
         {FIB_VALUES.map((v) => (
           <button
             key={v}
-            className={`vote-btn${myVote === v ? " selected" : ""}`}
+            className={`${styles.voteBtn}${myVote === v ? ` ${styles.selected}` : ""}`}
             onClick={() => onVote(v)}
           >
             {v}
