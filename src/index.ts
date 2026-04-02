@@ -28,8 +28,14 @@ const fastify = Fastify({
 });
 const log = fastify.log;
 
+const clientDist = path.join(__dirname, "..", "client", "dist");
+
 fastify.register(fastifyStatic, {
-  root: path.join(__dirname, "..", "client", "dist"),
+  root: clientDist,
+});
+
+fastify.get("/play/*", (_req, reply) => {
+  return reply.sendFile("index.html", clientDist);
 });
 
 const port = parseInt(process.env.PORT || "3000", 10);

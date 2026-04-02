@@ -22,7 +22,7 @@ export function Session({ sessionId, state, myVote, socketId, onVote, onReset }:
   const isObserver = me?.observer ?? false;
 
   const copySessionId = () => {
-    const url = window.location.origin + "/#" + sessionId;
+    const url = window.location.origin + "/play/" + sessionId;
     navigator.clipboard.writeText(url);
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
