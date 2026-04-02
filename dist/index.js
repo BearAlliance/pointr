@@ -19,7 +19,8 @@ const nanoid_1 = require("nanoid");
 const nanoid = (0, nanoid_1.customAlphabet)("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 6);
 const path_1 = __importDefault(require("path"));
 const sessions = new Map();
-const fastify = (0, fastify_1.default)();
+const fastify = (0, fastify_1.default)({ logger: true });
+const log = fastify.log;
 fastify.register(static_1.default, {
     root: path_1.default.join(__dirname, "..", "public"),
 });
@@ -58,6 +59,7 @@ io.on("connection", (socket) => {
             revealed: false,
         };
         sessions.set(sessionId, session);
+        log.info({ sessionId }, "session created");
         callback({ sessionId });
     });
     socket.on("join-session", (sessionId, callback) => {
@@ -73,6 +75,7 @@ io.on("connection", (socket) => {
             vote: null,
         });
         socket.join(sessionId);
+        log.info({ sessionId, socketId: socket.id }, "participant joined");
         callback({ ok: true });
         broadcastSession(session);
     });
@@ -85,7 +88,9 @@ io.on("connection", (socket) => {
         const participant = session.participants.get(socket.id);
         if (!participant)
             return;
+        const oldName = participant.name;
         participant.name = name.trim().slice(0, 30) || "Anonymous";
+        log.info({ sessionId: currentSessionId, socketId: socket.id, oldName, newName: participant.name }, "name changed");
         broadcastSession(session);
     });
     socket.on("vote", (value) => {
@@ -101,6 +106,7 @@ io.on("connection", (socket) => {
         if (!allowed.includes(value))
             return;
         participant.vote = value;
+        log.info({ sessionId: currentSessionId, socketId: socket.id, name: participant.name, vote: value }, "vote cast");
         broadcastSession(session);
     });
     socket.on("reveal", () => {
@@ -110,6 +116,7 @@ io.on("connection", (socket) => {
         if (!session)
             return;
         session.revealed = true;
+        log.info({ sessionId: currentSessionId }, "votes revealed");
         broadcastSession(session);
     });
     socket.on("reset", () => {
@@ -125,14 +132,18 @@ io.on("connection", (socket) => {
         broadcastSession(session);
     });
     socket.on("disconnect", () => {
+        var _a;
         if (!currentSessionId)
             return;
         const session = sessions.get(currentSessionId);
         if (!session)
             return;
+        const name = (_a = session.participants.get(socket.id)) === null || _a === void 0 ? void 0 : _a.name;
         session.participants.delete(socket.id);
+        log.info({ sessionId: currentSessionId, socketId: socket.id, name }, "participant left");
         if (session.participants.size === 0) {
             sessions.delete(currentSessionId);
+            log.info({ sessionId: currentSessionId }, "session ended");
         }
         else {
             broadcastSession(session);

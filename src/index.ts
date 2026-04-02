@@ -20,7 +20,8 @@ interface Session {
 
 const sessions = new Map<string, Session>();
 
-const fastify = Fastify();
+const fastify = Fastify({ logger: true });
+const log = fastify.log;
 
 fastify.register(fastifyStatic, {
   root: path.join(__dirname, "..", "public"),
@@ -69,6 +70,7 @@ io.on("connection", (socket) => {
       revealed: false,
     };
     sessions.set(sessionId, session);
+    log.info({ sessionId }, "session created");
     callback({ sessionId });
   });
 
@@ -87,6 +89,7 @@ io.on("connection", (socket) => {
     });
 
     socket.join(sessionId);
+    log.info({ sessionId, socketId: socket.id }, "participant joined");
     callback({ ok: true });
     broadcastSession(session);
   });
@@ -98,7 +101,9 @@ io.on("connection", (socket) => {
     const participant = session.participants.get(socket.id);
     if (!participant) return;
 
+    const oldName = participant.name;
     participant.name = name.trim().slice(0, 30) || "Anonymous";
+    log.info({ sessionId: currentSessionId, socketId: socket.id, oldName, newName: participant.name }, "name changed");
     broadcastSession(session);
   });
 
@@ -113,6 +118,7 @@ io.on("connection", (socket) => {
     if (!allowed.includes(value)) return;
 
     participant.vote = value;
+    log.info({ sessionId: currentSessionId, socketId: socket.id, name: participant.name, vote: value }, "vote cast");
     broadcastSession(session);
   });
 
@@ -122,6 +128,7 @@ io.on("connection", (socket) => {
     if (!session) return;
 
     session.revealed = true;
+    log.info({ sessionId: currentSessionId }, "votes revealed");
     broadcastSession(session);
   });
 
@@ -142,9 +149,12 @@ io.on("connection", (socket) => {
     const session = sessions.get(currentSessionId);
     if (!session) return;
 
+    const name = session.participants.get(socket.id)?.name;
     session.participants.delete(socket.id);
+    log.info({ sessionId: currentSessionId, socketId: socket.id, name }, "participant left");
     if (session.participants.size === 0) {
       sessions.delete(currentSessionId);
+      log.info({ sessionId: currentSessionId }, "session ended");
     } else {
       broadcastSession(session);
     }
