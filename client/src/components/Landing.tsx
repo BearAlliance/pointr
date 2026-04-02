@@ -1,4 +1,4 @@
-import { useState, type KeyboardEvent } from "react";
+import { useState, type KeyboardEvent, type ClipboardEvent } from "react";
 import styles from "./Landing.module.css";
 
 interface LandingProps {
@@ -19,6 +19,15 @@ export function Landing({ onCreateSession, onJoinSession, error }: LandingProps)
     if (e.key === "Enter") handleJoin();
   };
 
+  const handlePaste = (e: ClipboardEvent) => {
+    const text = e.clipboardData.getData("text");
+    const match = text.match(/\/play\/([A-Za-z0-9]+)/);
+    if (match) {
+      e.preventDefault();
+      setJoinId(match[1]);
+    }
+  };
+
   return (
     <div className={styles.landing}>
       <button className={styles.createBtn} onClick={onCreateSession}>Create Session</button>
@@ -32,6 +41,7 @@ export function Landing({ onCreateSession, onJoinSession, error }: LandingProps)
           value={joinId}
           onChange={(e) => setJoinId(e.target.value)}
           onKeyDown={handleKeyDown}
+          onPaste={handlePaste}
         />
         <button className={styles.joinBtn} onClick={handleJoin}>Join</button>
       </div>
