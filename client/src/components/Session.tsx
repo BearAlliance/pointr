@@ -31,6 +31,8 @@ export function Session({ sessionId, state, myVote, socketId, onVote, onReset }:
 
   const voters = state.participants.filter((p) => !p.observer);
   const allVoted = !state.revealed && voters.length > 0 && voters.every((p) => p.voted);
+  const votes = voters.filter((p) => p.vote !== null).map((p) => p.vote);
+  const consensus = state.revealed && votes.length > 1 && votes.every((v) => v === votes[0]);
 
   return (
     <div className={styles.session}>
@@ -52,6 +54,7 @@ export function Session({ sessionId, state, myVote, socketId, onVote, onReset }:
       />
 
       <ReadyBanner visible={allVoted} />
+      {consensus && <div className={styles.consensus}>Consensus!</div>}
 
       <div className={styles.actions}>
         <button className={styles.revealBtn} onClick={() => socket.emit("reveal")}>
