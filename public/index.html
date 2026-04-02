@@ -117,6 +117,17 @@
     .reset-btn { background: #ef4444; color: #fff; }
     .reset-btn:hover { background: #dc2626; }
 
+    .observer-row { text-align: center; margin-bottom: 1rem; }
+    .observer-row button {
+      padding: 0.4rem 1rem; font-size: 0.85rem; border: 2px solid #ddd;
+      border-radius: 8px; background: #fff; color: #555; cursor: pointer;
+    }
+    .observer-row button:hover { border-color: #4f46e5; }
+    .observer-row button.active {
+      background: #4f46e5; color: #fff; border-color: #4f46e5;
+    }
+    .observer-tag { font-size: 0.8rem; color: #888; font-weight: 400; margin-left: 0.4rem; }
+
     .error { color: #ef4444; text-align: center; margin-top: 0.5rem; font-size: 0.9rem; }
 
     footer {
@@ -153,7 +164,11 @@
         <button onclick="setName()">Set</button>
       </div>
 
-      <div class="vote-section">
+      <div class="observer-row">
+        <button id="observerToggle" onclick="toggleObserver()">Switch to Observer</button>
+      </div>
+
+      <div class="vote-section" id="voteSection">
         <h3>Your Vote</h3>
         <div class="vote-buttons" id="voteButtons"></div>
       </div>
@@ -177,6 +192,7 @@
     const socket = io();
     const fibValues = [1, 2, 3, 5, 8, 13, 21];
     let myVote = null;
+    let isObserver = false;
     let currentSessionId = null;
 
     // Build vote buttons
@@ -256,6 +272,17 @@
       if (e.key === "Enter") joinSession();
     });
 
+    function toggleObserver() {
+      socket.emit("toggle-observer");
+    }
+
+    function updateObserverUI() {
+      const btn = document.getElementById("observerToggle");
+      btn.textContent = isObserver ? "Switch to Voter" : "Switch to Observer";
+      btn.classList.toggle("active", isObserver);
+      document.getElementById("voteSection").style.display = isObserver ? "none" : "";
+    }
+
     function vote(value) {
       myVote = value;
       socket.emit("vote", value);
@@ -285,10 +312,20 @@
 
         const nameSpan = document.createElement("span");
         nameSpan.className = "participant-name";
-        nameSpan.textContent = p.id === socket.id ? p.name + " (you)" : p.name;
+        const label = p.id === socket.id ? p.name + " (you)" : p.name;
+        nameSpan.textContent = label;
+        if (p.observer) {
+          const tag = document.createElement("span");
+          tag.className = "observer-tag";
+          tag.textContent = "(observer)";
+          nameSpan.appendChild(tag);
+        }
 
         const voteSpan = document.createElement("span");
-        if (state.revealed && p.vote !== null) {
+        if (p.observer) {
+          voteSpan.className = "vote-status pending";
+          voteSpan.textContent = "\u2014";
+        } else if (state.revealed && p.vote !== null) {
           voteSpan.className = "vote-status revealed vote-" + p.vote;
           voteSpan.textContent = p.vote;
         } else if (p.voted) {
@@ -304,10 +341,12 @@
         list.appendChild(li);
       });
 
-      // Reset my vote display if session was reset
-      if (!state.revealed) {
-        const me = state.participants.find(p => p.id === socket.id);
-        if (me && !me.voted) {
+      // Sync local state
+      const me = state.participants.find(p => p.id === socket.id);
+      if (me) {
+        isObserver = me.observer;
+        updateObserverUI();
+        if (!state.revealed && !me.voted) {
           myVote = null;
           updateVoteButtons();
         }
