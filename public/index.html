@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pointr</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f5f5f5;
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    h1 { font-size: 1.8rem; margin: 2rem 0 0.5rem; }
+    .subtitle { color: #888; margin-bottom: 2rem; font-size: 0.95rem; }
+    .container { max-width: 600px; width: 100%; padding: 0 1rem; }
+
+    /* Landing */
+    #landing { text-align: center; margin-top: 15vh; }
+    #landing button {
+      font-size: 1.1rem; padding: 0.8rem 2rem;
+      background: #4f46e5; color: #fff; border: none; border-radius: 8px;
+      cursor: pointer; margin-bottom: 1.5rem;
+    }
+    #landing button:hover { background: #4338ca; }
+    .join-row { display: flex; gap: 0.5rem; justify-content: center; }
+    .join-row input {
+      padding: 0.6rem 1rem; border: 2px solid #ddd; border-radius: 8px;
+      font-size: 1rem; width: 160px; text-align: center;
+      text-transform: uppercase; letter-spacing: 2px;
+    }
+    .join-row button {
+      padding: 0.6rem 1.2rem; background: #10b981; color: #fff;
+      border: none; border-radius: 8px; cursor: pointer; font-size: 1rem;
+    }
+    .join-row button:hover { background: #059669; }
+
+    /* Session */
+    #session { display: none; margin-top: 2rem; }
+    .session-id {
+      text-align: center; margin-bottom: 1.5rem;
+      font-size: 0.9rem; color: #666;
+    }
+    .session-id code {
+      background: #e0e7ff; color: #4f46e5; padding: 0.3rem 0.8rem;
+      border-radius: 4px; font-size: 1.1rem; letter-spacing: 2px;
+      cursor: pointer;
+    }
+    .session-id code:hover { background: #c7d2fe; }
+    .copied { font-size: 0.8rem; color: #10b981; margin-left: 0.5rem; display: none; }
+
+    .name-row {
+      display: flex; gap: 0.5rem; justify-content: center; margin-bottom: 1.5rem;
+    }
+    .name-row input {
+      padding: 0.5rem 1rem; border: 2px solid #ddd; border-radius: 8px;
+      font-size: 0.95rem; width: 200px;
+    }
+    .name-row button {
+      padding: 0.5rem 1rem; background: #4f46e5; color: #fff;
+      border: none; border-radius: 8px; cursor: pointer; font-size: 0.95rem;
+    }
+
+    /* Vote buttons */
+    .vote-section { text-align: center; margin-bottom: 1.5rem; }
+    .vote-section h3 { margin-bottom: 0.8rem; color: #555; font-weight: 500; }
+    .vote-buttons { display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; }
+    .vote-btn {
+      width: 56px; height: 56px; font-size: 1.2rem; font-weight: 600;
+      border: 2px solid #ddd; border-radius: 10px; background: #fff;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .vote-btn:hover { border-color: #4f46e5; background: #eef2ff; }
+    .vote-btn.selected {
+      background: #4f46e5; color: #fff; border-color: #4f46e5;
+    }
+
+    /* Participants */
+    .participants { margin-bottom: 1.5rem; }
+    .participants h3 { margin-bottom: 0.8rem; color: #555; font-weight: 500; text-align: center; }
+    .participant-list { list-style: none; }
+    .participant-list li {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0.6rem 1rem; background: #fff; border-radius: 8px;
+      margin-bottom: 0.4rem; border: 1px solid #eee;
+    }
+    .participant-name { font-weight: 500; }
+    .vote-status {
+      width: 36px; height: 36px; display: flex; align-items: center;
+      justify-content: center; border-radius: 6px; font-weight: 600;
+      font-size: 0.95rem;
+    }
+    .vote-status.pending { background: #f3f4f6; color: #aaa; }
+    .vote-status.voted { background: #d1fae5; color: #059669; }
+    .vote-status.revealed { background: #e0e7ff; color: #4f46e5; }
+
+    /* Average */
+    /* Actions */
+    .actions { display: flex; gap: 0.5rem; justify-content: center; margin-bottom: 2rem; }
+    .actions button {
+      padding: 0.6rem 1.5rem; border: none; border-radius: 8px;
+      cursor: pointer; font-size: 0.95rem; font-weight: 500;
+    }
+    .reveal-btn { background: #f59e0b; color: #fff; }
+    .reveal-btn:hover { background: #d97706; }
+    .reset-btn { background: #ef4444; color: #fff; }
+    .reset-btn:hover { background: #dc2626; }
+
+    .error { color: #ef4444; text-align: center; margin-top: 0.5rem; font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+  <h1>Pointr</h1>
+  <div class="container">
+
+    <!-- Landing -->
+    <div id="landing">
+      <button onclick="createSession()">Create Session</button>
+      <div class="join-row">
+        <input type="text" id="joinId" placeholder="ABC123" maxlength="6">
+        <button onclick="joinSession()">Join</button>
+      </div>
+      <p class="error" id="joinError"></p>
+    </div>
+
+    <!-- Session -->
+    <div id="session">
+      <div class="session-id">
+        Session: <code id="sessionCode" onclick="copySessionId()"></code>
+        <span class="copied" id="copiedMsg">Copied!</span>
+      </div>
+
+      <div class="name-row">
+        <input type="text" id="nameInput" placeholder="Your name" maxlength="30">
+        <button onclick="setName()">Set</button>
+      </div>
+
+      <div class="vote-section">
+        <h3>Your Vote</h3>
+        <div class="vote-buttons" id="voteButtons"></div>
+      </div>
+
+      <div class="participants">
+        <h3>Participants</h3>
+        <ul class="participant-list" id="participantList"></ul>
+      </div>
+
+      <div class="actions">
+        <button class="reveal-btn" onclick="reveal()">Reveal Votes</button>
+        <button class="reset-btn" onclick="reset()">Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    const fibValues = [1, 2, 3, 5, 8, 13, 21];
+    let myVote = null;
+    let currentSessionId = null;
+
+    // Build vote buttons
+    const voteContainer = document.getElementById("voteButtons");
+    fibValues.forEach(v => {
+      const btn = document.createElement("button");
+      btn.className = "vote-btn";
+      btn.textContent = v;
+      btn.onclick = () => vote(v);
+      voteContainer.appendChild(btn);
+    });
+
+    // Check URL hash for session ID
+    if (window.location.hash) {
+      const id = window.location.hash.slice(1);
+      if (id.length > 0) {
+        document.getElementById("joinId").value = id;
+        joinSession();
+      }
+    }
+
+    function createSession() {
+      socket.emit("create-session", (data) => {
+        currentSessionId = data.sessionId;
+        joinAfterCreate(data.sessionId);
+      });
+    }
+
+    function joinAfterCreate(sessionId) {
+      socket.emit("join-session", sessionId, (data) => {
+        if (data.ok) {
+          showSession(sessionId);
+        }
+      });
+    }
+
+    function joinSession() {
+      const id = document.getElementById("joinId").value.trim();
+      if (!id) return;
+      socket.emit("join-session", id, (data) => {
+        if (data.ok) {
+          currentSessionId = id;
+          showSession(id);
+        } else {
+          document.getElementById("joinError").textContent = data.error || "Could not join session";
+        }
+      });
+    }
+
+    function showSession(sessionId) {
+      document.getElementById("landing").style.display = "none";
+      document.getElementById("session").style.display = "block";
+      document.getElementById("sessionCode").textContent = sessionId;
+      window.location.hash = sessionId;
+    }
+
+    function copySessionId() {
+      const url = window.location.origin + "/#" + currentSessionId;
+      navigator.clipboard.writeText(url);
+      const msg = document.getElementById("copiedMsg");
+      msg.style.display = "inline";
+      setTimeout(() => msg.style.display = "none", 1500);
+    }
+
+    function setName() {
+      const name = document.getElementById("nameInput").value.trim();
+      if (name) socket.emit("set-name", name);
+    }
+
+    // Also set name on Enter key
+    document.getElementById("nameInput").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") setName();
+    });
+
+    // Also join on Enter key
+    document.getElementById("joinId").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") joinSession();
+    });
+
+    function vote(value) {
+      myVote = value;
+      socket.emit("vote", value);
+      updateVoteButtons();
+    }
+
+    function updateVoteButtons() {
+      document.querySelectorAll(".vote-btn").forEach(btn => {
+        btn.classList.toggle("selected", parseInt(btn.textContent) === myVote);
+      });
+    }
+
+    function reveal() { socket.emit("reveal"); }
+
+    function reset() {
+      myVote = null;
+      updateVoteButtons();
+      socket.emit("reset");
+    }
+
+    socket.on("session-updated", (state) => {
+      // Participants
+      const list = document.getElementById("participantList");
+      list.innerHTML = "";
+      state.participants.forEach(p => {
+        const li = document.createElement("li");
+
+        const nameSpan = document.createElement("span");
+        nameSpan.className = "participant-name";
+        nameSpan.textContent = p.name;
+
+        const voteSpan = document.createElement("span");
+        if (state.revealed && p.vote !== null) {
+          voteSpan.className = "vote-status revealed";
+          voteSpan.textContent = p.vote;
+        } else if (p.voted) {
+          voteSpan.className = "vote-status voted";
+          voteSpan.textContent = "\u2713";
+        } else {
+          voteSpan.className = "vote-status pending";
+          voteSpan.textContent = "?";
+        }
+
+        li.appendChild(nameSpan);
+        li.appendChild(voteSpan);
+        list.appendChild(li);
+      });
+
+      // Reset my vote display if session was reset
+      if (!state.revealed) {
+        const me = state.participants.find(p => p.id === socket.id);
+        if (me && !me.voted) {
+          myVote = null;
+          updateVoteButtons();
+        }
+      }
+    });
+  </script>
+</body>
+</html>

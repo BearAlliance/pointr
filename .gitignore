@@ -1,0 +1,6 @@
+/tmp
+/out-tsc
+
+/node_modules
+npm-debug.log*
+.vscode/*
