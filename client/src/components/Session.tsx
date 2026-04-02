@@ -31,6 +31,7 @@ export function Session({ sessionId, state, myVote, socketId, onVote, onReset }:
 
   const voters = state.participants.filter((p) => !p.observer);
   const allVoted = !state.revealed && voters.length > 0 && voters.every((p) => p.voted);
+  const hasVotes = voters.some((p) => p.voted);
   const votes = voters.filter((p) => p.vote !== null).map((p) => p.vote);
   const consensus = state.revealed && votes.length > 1 && votes.every((v) => v === votes[0]);
 
@@ -45,7 +46,7 @@ export function Session({ sessionId, state, myVote, socketId, onVote, onReset }:
       <NameInput />
       <ObserverToggle isObserver={isObserver} />
 
-      {!isObserver && <VoteButtons myVote={myVote} onVote={onVote} />}
+      {!isObserver && <VoteButtons myVote={myVote} onVote={onVote} disabled={state.revealed} />}
 
       <ParticipantList
         participants={state.participants}
@@ -57,10 +58,10 @@ export function Session({ sessionId, state, myVote, socketId, onVote, onReset }:
       {consensus && <div className={styles.consensus}>Consensus!</div>}
 
       <div className={styles.actions}>
-        <button className={styles.revealBtn} onClick={() => socket.emit("reveal")}>
-          Reveal Votes
+        <button className={styles.revealBtn} onClick={() => socket.emit("reveal")} disabled={state.revealed}>
+          Reveal
         </button>
-        <button className={styles.resetBtn} onClick={onReset}>
+        <button className={styles.resetBtn} onClick={onReset} disabled={!hasVotes}>
           Reset
         </button>
       </div>
