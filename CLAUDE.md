@@ -22,8 +22,8 @@ Pointr is a pointing poker tool for agile estimation. No login or registration r
   - `src/sessions.ts` — shared types (`Session`, `Participant`) and in-memory session store
   - `src/stats.ts` — `/stats` JSON endpoint (active sessions, uptime)
 - **Frontend:** React + Vite app in `client/`, built output in `client/dist/`, served statically by Fastify in production
-  - Components in `client/src/components/`
-  - Styles in `client/src/styles.css`
+  - Components in `client/src/components/`, each with a co-located `.module.css` file (CSS modules)
+  - Global styles (reset only) in `client/src/styles.css`
   - Socket.IO client singleton in `client/src/socket.ts`
   - Vite config in `vite.config.ts` (project root, `root: "client"`), proxies `/socket.io` to backend in dev
 - **Storage:** In-memory (no database) — sessions are lost on restart
