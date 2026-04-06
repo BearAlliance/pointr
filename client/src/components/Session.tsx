@@ -61,7 +61,7 @@ export function Session({ sessionId, state, myVote, socketId, onVote, onReset }:
         <button className={styles.revealBtn} onClick={() => socket.emit("reveal")} disabled={state.revealed}>
           Reveal
         </button>
-        <button className={styles.resetBtn} onClick={onReset} disabled={!hasVotes}>
+        <button className={styles.resetBtn} onClick={onReset} disabled={!hasVotes && !state.revealed}>
           Reset
         </button>
       </div>
