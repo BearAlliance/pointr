@@ -3,11 +3,16 @@ import { socket } from "../socket";
 import styles from "./NameInput.module.css";
 
 export function NameInput() {
-  const [name, setName] = useState("");
+  const [name, setName] = useState(
+    () => localStorage.getItem("pointr-name") ?? ""
+  );
 
   const handleSet = () => {
     const trimmed = name.trim();
-    if (trimmed) socket.emit("set-name", trimmed);
+    if (trimmed) {
+      localStorage.setItem("pointr-name", trimmed);
+      socket.emit("set-name", trimmed);
+    }
   };
 
   const handleKeyDown = (e: KeyboardEvent) => {
